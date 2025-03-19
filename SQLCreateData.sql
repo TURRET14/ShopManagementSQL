@@ -8,7 +8,7 @@ END
 
 GO
 
-CREATE PROCEDURE CreateEmployee 
+CREATE PROCEDURE CreateEmployee
 @Name NVARCHAR(100),
 @Age INT = NULL,
 @Gender NCHAR = NULL,
@@ -54,7 +54,7 @@ CREATE PROCEDURE CreateProduct
 @AdminLogin NVARCHAR(50),
 @AdminPassword NVARCHAR(50)
 AS BEGIN
-IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('Администратор', 'Менеджер'))
+IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('Администратор'))
    INSERT INTO Products (Name, Price, Amount, Description) VALUES (@Name, @Price, @Amount, @Description);
 ELSE
    THROW 50000, 'AUTHORIZATION_ERROR', 255;
@@ -70,7 +70,7 @@ CREATE PROCEDURE CreateSupplier
 @AdminLogin NVARCHAR(50),
 @AdminPassword NVARCHAR(50)
 AS BEGIN
-IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('Администратор', 'Менеджер'))
+IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('Администратор'))
    INSERT INTO Suppliers (Name, PhoneNumber, Email, AccountNumber) VALUES (@Name, @PhoneNumber, @Email, @AccountNumber);
 ELSE
    THROW 50000, 'AUTHORIZATION_ERROR', 255;
@@ -92,7 +92,7 @@ END
 
 GO
 
-CREATE PROCEDURE CreateCustomerOrderDetail
+CREATE PROCEDURE CreateCustomerOrderItem
 @OrderID INT,
 @ProductID INT,
 @Amount INT = 1,
@@ -100,22 +100,23 @@ CREATE PROCEDURE CreateCustomerOrderDetail
 @AdminPassword NVARCHAR(50)
 AS BEGIN
 IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('Администратор', 'Менеджер', 'Кассир'))
-   INSERT INTO CustomerOrderDetails (OrderID, ProductID, Amount, Price) VALUES (@OrderID, @ProductID, @Amount, (SELECT TOP 1 Price FROM Products WHERE ID = @ProductID));
+   INSERT INTO CustomerOrderItems (OrderID, ProductID, Amount, Price) VALUES (@OrderID, @ProductID, @Amount, (SELECT TOP 1 Price FROM Products WHERE ID = @ProductID));
 ELSE
    THROW 50000, 'AUTHORIZATION_ERROR', 255;
 END
 
 GO
 
-CREATE PROCEDURE CreateCustomerReturnDetail
-@CustomerOrderDetailID INT,
+CREATE PROCEDURE CreateCustomerReturnItem
+@OrderItemID INT,
 @Amount INT,
 @EmployeeID INT,
+@Reason VARCHAR(150) = NULL,
 @AdminLogin NVARCHAR(50),
 @AdminPassword NVARCHAR(50)
 AS BEGIN
 IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('Администратор', 'Менеджер'))
-   INSERT INTO CustomerReturns (CustomerOrderDetailID, Amount, EmployeeID, Date) VALUES (@CustomerOrderDetailID, @Amount, @EmployeeID, GETDATE());
+   INSERT INTO CustomerReturnItems (OrderItemID, Amount, EmployeeID, Reason, Date) VALUES (@OrderItemID, @Amount, @EmployeeID, @Reason, GETDATE());
 ELSE
    THROW 50000, 'AUTHORIZATION_ERROR', 255;
 END
@@ -128,7 +129,7 @@ CREATE PROCEDURE CreateSupplierOrder
 @AdminLogin NVARCHAR(50),
 @AdminPassword NVARCHAR(50)
 AS BEGIN
-IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('Администратор', 'Менеджер'))
+IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('Администратор'))
    INSERT INTO SupplierOrders (SupplierID, EmployeeID, Date) VALUES (@SupplierID, @EmployeeID, GETDATE());
 ELSE
    THROW 50000, 'AUTHORIZATION_ERROR', 255;
@@ -136,7 +137,7 @@ END;
 
 GO
 
-CREATE PROCEDURE CreateSupplierOrderDetail
+CREATE PROCEDURE CreateSupplierOrderItem
 @OrderID INT,
 @ProductID INT,
 @Amount INT = 1,
@@ -144,23 +145,24 @@ CREATE PROCEDURE CreateSupplierOrderDetail
 @AdminLogin NVARCHAR(50),
 @AdminPassword NVARCHAR(50)
 AS BEGIN
-IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('Администратор', 'Менеджер'))
-   INSERT INTO SupplierOrderDetails (OrderID, ProductID, Amount, Price) VALUES (@OrderID, @ProductID, @Amount, @Price);
+IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('Администратор'))
+   INSERT INTO SupplierOrderItems (OrderID, ProductID, Amount, Price) VALUES (@OrderID, @ProductID, @Amount, @Price);
 ELSE
    THROW 50000, 'AUTHORIZATION_ERROR', 255;
 END;
 
 GO
 
-CREATE PROCEDURE CreateSupplierReturnDetail
-@SupplierOrderDetailID INT,
+CREATE PROCEDURE CreateSupplierReturnItem
+@OrderItemID INT,
 @Amount INT,
 @EmployeeID INT,
+@Reason VARCHAR(150),
 @AdminLogin NVARCHAR(50),
 @AdminPassword NVARCHAR(50)
 AS BEGIN
-IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('Администратор', 'Менеджер'))
-   INSERT INTO SupplierReturns (SupplierOrderDetailID, Amount, EmployeeID, Date) VALUES (@SupplierOrderDetailID, @Amount, @EmployeeID, GETDATE());
+IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('Администратор'))
+   INSERT INTO SupplierReturnItems(OrderItemID, Amount, EmployeeID, Reason, Date) VALUES (@OrderItemID, @Amount, @EmployeeID, @Reason, GETDATE());
 ELSE
    THROW 50000, 'AUTHORIZATION_ERROR', 255;
 END;

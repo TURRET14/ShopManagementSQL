@@ -95,15 +95,15 @@ END
 
 GO
 
-CREATE PROCEDURE DeleteCustomerOrderDetail
+CREATE PROCEDURE DeleteCustomerOrderItem
 @ID INT,
 @AdminLogin NVARCHAR(50),
 @AdminPassword NVARCHAR(50)
 AS BEGIN
 IF (Dbo.SignIn(@AdminLogin, @AdminPassword) = 'Администратор')
    BEGIN
-   IF EXISTS(SELECT ID FROM CustomerOrderDetails WHERE ID = @ID)
-      DELETE FROM CustomerOrderDetails
+   IF EXISTS(SELECT ID FROM CustomerOrderItems WHERE ID = @ID)
+      DELETE FROM CustomerOrderItems
       WHERE ID = @ID;
    ELSE
       THROW 50000, 'INVALID_ID', 255;
@@ -114,15 +114,15 @@ END
 
 GO
 
-CREATE PROCEDURE DeleteCustomerReturn
+CREATE PROCEDURE DeleteCustomerReturnItem
 @ID INT,
 @AdminLogin NVARCHAR(50),
 @AdminPassword NVARCHAR(50)
 AS BEGIN
 IF (Dbo.SignIn(@AdminLogin, @AdminPassword) = 'Администратор')
    BEGIN
-   IF EXISTS(SELECT ID FROM CustomerReturns WHERE ID = @ID)
-      DELETE FROM CustomerReturns
+   IF EXISTS(SELECT ID FROM CustomerReturnItems WHERE ID = @ID)
+      DELETE FROM CustomerReturnItems
       WHERE ID = @ID;
    ELSE
       THROW 50000, 'INVALID_ID', 255;
@@ -152,15 +152,15 @@ END
 
 GO
 
-CREATE PROCEDURE DeleteSupplierOrderDetail
+CREATE PROCEDURE DeleteSupplierOrderItem
 @ID INT,
 @AdminLogin NVARCHAR(50),
 @AdminPassword NVARCHAR(50)
 AS BEGIN
 IF (Dbo.SignIn(@AdminLogin, @AdminPassword) = 'Администратор')
    BEGIN
-   IF EXISTS(SELECT ID FROM SupplierOrderDetails WHERE ID = @ID)
-      DELETE FROM SupplierOrderDetails
+   IF EXISTS(SELECT ID FROM SupplierOrderItems WHERE ID = @ID)
+      DELETE FROM SupplierOrderItems
       WHERE ID = @ID;
    ELSE
       THROW 50000, 'INVALID_ID', 255;
@@ -171,15 +171,15 @@ END
 
 GO
 
-CREATE PROCEDURE DeleteSupplierReturn
+CREATE PROCEDURE DeleteSupplierReturnItem
 @ID INT,
 @AdminLogin NVARCHAR(50),
 @AdminPassword NVARCHAR(50)
 AS BEGIN
 IF (Dbo.SignIn(@AdminLogin, @AdminPassword) = 'Администратор')
    BEGIN
-   IF EXISTS(SELECT ID FROM SupplierReturns WHERE ID = @ID)
-      DELETE FROM SupplierReturns
+   IF EXISTS(SELECT ID FROM SupplierReturnItems WHERE ID = @ID)
+      DELETE FROM SupplierReturnItems
       WHERE ID = @ID;
    ELSE
       THROW 50000, 'INVALID_ID', 255;

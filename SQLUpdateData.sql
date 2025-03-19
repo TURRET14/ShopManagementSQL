@@ -46,7 +46,7 @@ CREATE PROCEDURE UpdateCustomer
 AS BEGIN
 IF (NOT EXISTS(SELECT ID FROM Customers WHERE ID = @ID))
    THROW 50000, 'INVALID_ID_ERROR', 255;
-IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('Администратор', 'Менеджер'))
+IF (Dbo.SignIn(@AdminLogin, @AdminPassword) = 'Администратор')
    UPDATE Customers
    SET Name = @Name,
    PhoneNumber = @PhoneNumber,
@@ -69,7 +69,7 @@ CREATE PROCEDURE UpdateProduct
 AS BEGIN
 IF (NOT EXISTS(SELECT ID FROM Products WHERE ID = @ID))
    THROW 50000, 'INVALID_ID_ERROR', 255;
-IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('Администратор', 'Менеджер'))
+IF (Dbo.SignIn(@AdminLogin, @AdminPassword) = 'Администратор')
    UPDATE Products
    SET Name = @Name,
    Price = @Price,
@@ -93,7 +93,7 @@ CREATE PROCEDURE UpdateSupplier
 AS BEGIN
 IF (NOT EXISTS(SELECT ID FROM Suppliers WHERE ID = @ID))
    THROW 50000, 'INVALID_ID_ERROR', 255;
-IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('Администратор', 'Менеджер'))
+IF (Dbo.SignIn(@AdminLogin, @AdminPassword) = 'Администратор')
    UPDATE Suppliers
    SET Name = @Name,
    PhoneNumber = @PhoneNumber,
