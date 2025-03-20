@@ -1,3 +1,5 @@
+CREATE DATABASE ShopManagement;
+GO
 USE ShopManagement;
 CREATE TABLE Employees
 (ID INT PRIMARY KEY IDENTITY(0, 1),
@@ -7,7 +9,7 @@ Gender NCHAR CHECK (Gender IN ('M', 'F')),
 PhoneNumber NVARCHAR(15),
 Email NVARCHAR(100),
 Experience INT CHECK (Experience >= 0),
-Position NVARCHAR(50) CHECK (Position IN ('Администратор', 'Менеджер', 'Кассир')),
+Position NVARCHAR(50) CHECK (Position IN ('SYSTEM_ADMIN', 'SHOP_ADMIN', 'SHOP_MANAGER', 'SHOP_CASHIER')),
 UserLogin NVARCHAR(50) UNIQUE,
 UserPassword VARBINARY(64));
 

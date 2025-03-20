@@ -5,7 +5,7 @@ CREATE PROCEDURE DeleteEmployee
 @AdminLogin NVARCHAR(50),
 @AdminPassword NVARCHAR(50)
 AS BEGIN
-IF (Dbo.SignIn(@AdminLogin, @AdminPassword) = 'Администратор')
+IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('SYSTEM_ADMIN', 'SHOP_ADMIN'))
    BEGIN
    IF EXISTS(SELECT ID FROM Employees WHERE ID = @ID)
       DELETE FROM Employees
@@ -24,7 +24,7 @@ CREATE PROCEDURE DeleteCustomer
 @AdminLogin NVARCHAR(50),
 @AdminPassword NVARCHAR(50)
 AS BEGIN
-IF (Dbo.SignIn(@AdminLogin, @AdminPassword) = 'Администратор')
+IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('SYSTEM_ADMIN', 'SHOP_ADMIN'))
    BEGIN
    IF EXISTS(SELECT ID FROM Customers WHERE ID = @ID)
       DELETE FROM Customers
@@ -43,7 +43,7 @@ CREATE PROCEDURE DeleteProduct
 @AdminLogin NVARCHAR(50),
 @AdminPassword NVARCHAR(50)
 AS BEGIN
-IF (Dbo.SignIn(@AdminLogin, @AdminPassword) = 'Администратор')
+IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('SYSTEM_ADMIN', 'SHOP_ADMIN'))
    BEGIN
    IF EXISTS(SELECT ID FROM Products WHERE ID = @ID)
       DELETE FROM Products
@@ -62,7 +62,7 @@ CREATE PROCEDURE DeleteSupplier
 @AdminLogin NVARCHAR(50),
 @AdminPassword NVARCHAR(50)
 AS BEGIN
-IF (Dbo.SignIn(@AdminLogin, @AdminPassword) = 'Администратор')
+IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('SYSTEM_ADMIN', 'SHOP_ADMIN'))
    BEGIN
    IF EXISTS(SELECT ID FROM Suppliers WHERE ID = @ID)
       DELETE FROM Suppliers
@@ -81,7 +81,7 @@ CREATE PROCEDURE DeleteCustomerOrder
 @AdminLogin NVARCHAR(50),
 @AdminPassword NVARCHAR(50)
 AS BEGIN
-IF (Dbo.SignIn(@AdminLogin, @AdminPassword) = 'Администратор')
+IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('SYSTEM_ADMIN', 'SHOP_ADMIN'))
    BEGIN
    IF EXISTS(SELECT ID FROM CustomerOrders WHERE ID = @ID)
       DELETE FROM CustomerOrders
@@ -100,7 +100,7 @@ CREATE PROCEDURE DeleteCustomerOrderItem
 @AdminLogin NVARCHAR(50),
 @AdminPassword NVARCHAR(50)
 AS BEGIN
-IF (Dbo.SignIn(@AdminLogin, @AdminPassword) = 'Администратор')
+IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('SYSTEM_ADMIN', 'SHOP_ADMIN'))
    BEGIN
    IF EXISTS(SELECT ID FROM CustomerOrderItems WHERE ID = @ID)
       DELETE FROM CustomerOrderItems
@@ -119,7 +119,7 @@ CREATE PROCEDURE DeleteCustomerReturnItem
 @AdminLogin NVARCHAR(50),
 @AdminPassword NVARCHAR(50)
 AS BEGIN
-IF (Dbo.SignIn(@AdminLogin, @AdminPassword) = 'Администратор')
+IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('SYSTEM_ADMIN', 'SHOP_ADMIN'))
    BEGIN
    IF EXISTS(SELECT ID FROM CustomerReturnItems WHERE ID = @ID)
       DELETE FROM CustomerReturnItems
@@ -138,7 +138,7 @@ CREATE PROCEDURE DeleteSupplierOrder
 @AdminLogin NVARCHAR(50),
 @AdminPassword NVARCHAR(50)
 AS BEGIN
-IF (Dbo.SignIn(@AdminLogin, @AdminPassword) = 'Администратор')
+IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('SYSTEM_ADMIN', 'SHOP_ADMIN'))
    BEGIN
    IF EXISTS(SELECT ID FROM SupplierOrders WHERE ID = @ID)
       DELETE FROM SupplierOrders
@@ -157,7 +157,7 @@ CREATE PROCEDURE DeleteSupplierOrderItem
 @AdminLogin NVARCHAR(50),
 @AdminPassword NVARCHAR(50)
 AS BEGIN
-IF (Dbo.SignIn(@AdminLogin, @AdminPassword) = 'Администратор')
+IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('SYSTEM_ADMIN', 'SHOP_ADMIN'))
    BEGIN
    IF EXISTS(SELECT ID FROM SupplierOrderItems WHERE ID = @ID)
       DELETE FROM SupplierOrderItems
@@ -176,7 +176,7 @@ CREATE PROCEDURE DeleteSupplierReturnItem
 @AdminLogin NVARCHAR(50),
 @AdminPassword NVARCHAR(50)
 AS BEGIN
-IF (Dbo.SignIn(@AdminLogin, @AdminPassword) = 'Администратор')
+IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('SYSTEM_ADMIN', 'SHOP_ADMIN'))
    BEGIN
    IF EXISTS(SELECT ID FROM SupplierReturnItems WHERE ID = @ID)
       DELETE FROM SupplierReturnItems

@@ -83,7 +83,7 @@ AS BEGIN
 UPDATE Products
 SET Amount = Products.Amount + OrderProducts.AmountSum - OrderProducts.AmountReturnedSum
 FROM Products
-JOIN (SELECT ID, ProductID, SUM(Amount) AS AmountSum, SUM(AmountReturned) AS AmountReturnedSum FROM Deleted 
+JOIN (SELECT ProductID, SUM(Amount) AS AmountSum, SUM(AmountReturned) AS AmountReturnedSum FROM Deleted 
    JOIN (SELECT OrderItemID, SUM(Amount) AS AmountReturned FROM CustomerReturnItems GROUP BY OrderItemID) AS ReturnedGroupBy
    ON ReturnedGroupBy.OrderItemID = Deleted.ID GROUP BY ProductID) AS OrderProducts
    ON OrderProducts.ProductID = Products.ID;
@@ -123,7 +123,7 @@ IF EXISTS(SELECT 1 FROM Deleted
 UPDATE Products
 SET Amount = Products.Amount - OrderProducts.AmountSum + OrderProducts.AmountReturnedSum
 FROM Products
-JOIN (SELECT ID, ProductID, SUM(Amount) AS AmountSum, SUM(AmountReturned) AS AmountReturnedSum FROM Deleted
+JOIN (SELECT ProductID, SUM(Amount) AS AmountSum, SUM(AmountReturned) AS AmountReturnedSum FROM Deleted
    JOIN (SELECT OrderItemID, SUM(Amount) AS AmountReturned FROM SupplierReturnItems GROUP BY OrderItemID) AS ReturnedGroupBy
    ON ReturnedGroupBy.OrderItemID = Deleted.ID GROUP BY ProductID) AS OrderProducts
    ON OrderProducts.ProductID = Products.ID;

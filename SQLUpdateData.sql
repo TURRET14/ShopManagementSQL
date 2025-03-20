@@ -14,11 +14,11 @@ CREATE PROCEDURE UpdateEmployee
 @AdminLogin NVARCHAR(50),
 @AdminPassword NVARCHAR(50)
 AS BEGIN
-IF @Position = 'Администратор'
+IF @Position = 'SHOP_ADMIN'
    THROW 50000, 'INVALID_POSITION_ERROR', 255;
 IF (NOT EXISTS(SELECT ID FROM Employees WHERE ID = @ID))
    THROW 50000, 'INVALID_ID_ERROR', 255;
-IF (Dbo.SignIn(@AdminLogin, @AdminPassword) = 'Администратор')
+IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('SYSTEM_ADMIN', 'SHOP_ADMIN'))
    UPDATE Employees
    SET Name = @Name,
    Age = @Age,
@@ -46,7 +46,7 @@ CREATE PROCEDURE UpdateCustomer
 AS BEGIN
 IF (NOT EXISTS(SELECT ID FROM Customers WHERE ID = @ID))
    THROW 50000, 'INVALID_ID_ERROR', 255;
-IF (Dbo.SignIn(@AdminLogin, @AdminPassword) = 'Администратор')
+IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('SYSTEM_ADMIN', 'SHOP_ADMIN'))
    UPDATE Customers
    SET Name = @Name,
    PhoneNumber = @PhoneNumber,
@@ -69,7 +69,7 @@ CREATE PROCEDURE UpdateProduct
 AS BEGIN
 IF (NOT EXISTS(SELECT ID FROM Products WHERE ID = @ID))
    THROW 50000, 'INVALID_ID_ERROR', 255;
-IF (Dbo.SignIn(@AdminLogin, @AdminPassword) = 'Администратор')
+IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('SYSTEM_ADMIN', 'SHOP_ADMIN'))
    UPDATE Products
    SET Name = @Name,
    Price = @Price,
@@ -93,7 +93,7 @@ CREATE PROCEDURE UpdateSupplier
 AS BEGIN
 IF (NOT EXISTS(SELECT ID FROM Suppliers WHERE ID = @ID))
    THROW 50000, 'INVALID_ID_ERROR', 255;
-IF (Dbo.SignIn(@AdminLogin, @AdminPassword) = 'Администратор')
+IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('SYSTEM_ADMIN', 'SHOP_ADMIN'))
    UPDATE Suppliers
    SET Name = @Name,
    PhoneNumber = @PhoneNumber,
