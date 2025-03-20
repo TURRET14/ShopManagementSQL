@@ -99,7 +99,12 @@ CREATE PROCEDURE CreateCustomerOrderItem
 @AdminPassword NVARCHAR(50)
 AS BEGIN
 IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('SYSTEM_ADMIN', 'SHOP_ADMIN', 'SHOP_MANAGER', 'SHOP_CASHIER'))
+   BEGIN
+   SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+   BEGIN TRANSACTION;
    INSERT INTO CustomerOrderItems (OrderID, ProductID, Amount, Price) VALUES (@OrderID, @ProductID, @Amount, (SELECT TOP 1 Price FROM Products WHERE ID = @ProductID));
+   COMMIT;
+   END;
 ELSE
    THROW 50000, 'AUTHORIZATION_ERROR', 255;
 END
@@ -114,7 +119,12 @@ CREATE PROCEDURE CreateCustomerReturnItem
 @AdminPassword NVARCHAR(50)
 AS BEGIN
 IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('SYSTEM_ADMIN', 'SHOP_ADMIN', 'SHOP_MANAGER'))
+   BEGIN
+   SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+   BEGIN TRANSACTION;
    INSERT INTO CustomerReturnItems (OrderItemID, Amount, EmployeeID, Reason, Date) VALUES (@OrderItemID, @Amount, (SELECT ID FROM Employees WHERE UserLogin = @AdminLogin), @Reason, GETDATE());
+   COMMIT;
+   END;
 ELSE
    THROW 50000, 'AUTHORIZATION_ERROR', 255;
 END
@@ -143,7 +153,12 @@ CREATE PROCEDURE CreateSupplierOrderItem
 @AdminPassword NVARCHAR(50)
 AS BEGIN
 IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('SYSTEM_ADMIN', 'SHOP_ADMIN'))
+   BEGIN
+   SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+   BEGIN TRANSACTION;
    INSERT INTO SupplierOrderItems (OrderID, ProductID, Amount, Price) VALUES (@OrderID, @ProductID, @Amount, @Price);
+   COMMIT;
+   END;
 ELSE
    THROW 50000, 'AUTHORIZATION_ERROR', 255;
 END;
@@ -158,7 +173,12 @@ CREATE PROCEDURE CreateSupplierReturnItem
 @AdminPassword NVARCHAR(50)
 AS BEGIN
 IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('SYSTEM_ADMIN', 'SHOP_ADMIN'))
+   BEGIN
+   SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+   BEGIN TRANSACTION;
    INSERT INTO SupplierReturnItems(OrderItemID, Amount, EmployeeID, Reason, Date) VALUES (@OrderItemID, @Amount, (SELECT ID FROM Employees WHERE UserLogin = @AdminLogin), @Reason, GETDATE());
+   COMMIT;
+   END;
 ELSE
    THROW 50000, 'AUTHORIZATION_ERROR', 255;
 END;

@@ -103,8 +103,13 @@ AS BEGIN
 IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('SYSTEM_ADMIN', 'SHOP_ADMIN'))
    BEGIN
    IF EXISTS(SELECT ID FROM CustomerOrderItems WHERE ID = @ID)
+      BEGIN
+      SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+      BEGIN TRANSACTION;
       DELETE FROM CustomerOrderItems
       WHERE ID = @ID;
+      COMMIT;
+      END;
    ELSE
       THROW 50000, 'INVALID_ID', 255;
    END;
@@ -122,8 +127,13 @@ AS BEGIN
 IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('SYSTEM_ADMIN', 'SHOP_ADMIN'))
    BEGIN
    IF EXISTS(SELECT ID FROM CustomerReturnItems WHERE ID = @ID)
+      BEGIN
+      SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+      BEGIN TRANSACTION;
       DELETE FROM CustomerReturnItems
       WHERE ID = @ID;
+      COMMIT;
+      END;
    ELSE
       THROW 50000, 'INVALID_ID', 255;
    END;
@@ -160,8 +170,13 @@ AS BEGIN
 IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('SYSTEM_ADMIN', 'SHOP_ADMIN'))
    BEGIN
    IF EXISTS(SELECT ID FROM SupplierOrderItems WHERE ID = @ID)
+      BEGIN
+      SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+      BEGIN TRANSACTION;
       DELETE FROM SupplierOrderItems
       WHERE ID = @ID;
+      COMMIT;
+      END;
    ELSE
       THROW 50000, 'INVALID_ID', 255;
    END;
@@ -179,8 +194,13 @@ AS BEGIN
 IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('SYSTEM_ADMIN', 'SHOP_ADMIN'))
    BEGIN
    IF EXISTS(SELECT ID FROM SupplierReturnItems WHERE ID = @ID)
+      BEGIN
+      SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+      BEGIN TRANSACTION;
       DELETE FROM SupplierReturnItems
       WHERE ID = @ID;
+      COMMIT;
+      END;
    ELSE
       THROW 50000, 'INVALID_ID', 255;
    END;
