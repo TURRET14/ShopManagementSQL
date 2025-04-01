@@ -14,11 +14,11 @@ CREATE PROCEDURE UpdateEmployee
 @AdminLogin NVARCHAR(50),
 @AdminPassword NVARCHAR(50)
 AS BEGIN
-IF @Position = 'SHOP_ADMIN'
+IF (@Position = 'SYSTEM_ADMIN' AND @ID != ISNULL((SELECT ID FROM Employees WHERE UserLogin = @AdminLogin), -1)
    THROW 50000, 'INVALID_POSITION_ERROR', 255;
 IF (NOT EXISTS(SELECT ID FROM Employees WHERE ID = @ID))
    THROW 50000, 'INVALID_ID_ERROR', 255;
-IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('SYSTEM_ADMIN', 'SHOP_ADMIN'))
+IF (Dbo.SignIn(@AdminLogin, @AdminPassword) = 'SYSTEM_ADMIN')
    UPDATE Employees
    SET Name = @Name,
    Age = @Age,

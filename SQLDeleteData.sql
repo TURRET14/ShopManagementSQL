@@ -5,7 +5,7 @@ CREATE PROCEDURE DeleteEmployee
 @AdminLogin NVARCHAR(50),
 @AdminPassword NVARCHAR(50)
 AS BEGIN
-IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('SYSTEM_ADMIN', 'SHOP_ADMIN'))
+IF (Dbo.SignIn(@AdminLogin, @AdminPassword) = 'SYSTEM_ADMIN')
    BEGIN
    IF EXISTS(SELECT ID FROM Employees WHERE ID = @ID)
       DELETE FROM Employees
