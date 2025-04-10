@@ -6,7 +6,7 @@ CREATE TABLE Employees
 Name NVARCHAR(100) NOT NULL,
 Age INT CHECK (Age BETWEEN 18 AND 100),
 Gender NCHAR CHECK (Gender IN ('M', 'F')),
-PhoneNumber NVARCHAR(15),
+PhoneNumber NVARCHAR(20),
 Email NVARCHAR(100),
 Experience INT CHECK (Experience >= 0),
 Position NVARCHAR(50) CHECK (Position IN ('SYSTEM_ADMIN', 'SHOP_ADMIN', 'SHOP_MANAGER', 'SHOP_CASHIER')),
@@ -51,7 +51,7 @@ Date DATE NOT NULL);
 CREATE TABLE Customers
 (ID INT PRIMARY KEY IDENTITY(0, 1),
 Name NVARCHAR(100) NOT NULL,
-PhoneNumber NVARCHAR(15),
+PhoneNumber NVARCHAR(20),
 Email NVARCHAR(100));
 
 CREATE TABLE CustomerOrders
