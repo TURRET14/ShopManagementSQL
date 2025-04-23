@@ -6,7 +6,7 @@ CREATE PROCEDURE GetEmployees
 AS BEGIN
 IF (Dbo.SignIn(@AdminLogin, @AdminPassword) NOT IN ('SYSTEM_ADMIN'))
    THROW 50000, 'AUTHORIZATION_ERROR', 255;
-SELECT ID, Name, Age, Gender, PhoneNumber, Email, Experience, Position, UserLogin, '' AS UserPassword FROM Employees;
+SELECT ID, Name, Age, Gender, PhoneNumber, Email, Experience, Position, Salary, UserLogin, '' AS UserPassword FROM Employees;
 END
 
 GO
@@ -17,7 +17,7 @@ CREATE PROCEDURE GetEmployeesIDAndNames
 AS BEGIN
 IF (Dbo.SignIn(@AdminLogin, @AdminPassword) NOT IN ('SYSTEM_ADMIN', 'SHOP_ADMIN', 'SHOP_MANAGER', 'SHOP_CASHIER'))
    THROW 50000, 'AUTHORIZATION_ERROR', 255;
-SELECT ID, Name, 0 AS Age, '' AS Gender, '' AS PhoneNumber, '' AS Email, 0 AS Experience, '' AS Position, '' AS UserLogin, '' AS UserPassword FROM Employees;
+SELECT ID, Name, 0 AS Age, '' AS Gender, '' AS PhoneNumber, '' AS Email, 0 AS Experience, '' AS Position, 0 AS Salary, '' AS UserLogin, '' AS UserPassword FROM Employees;
 END
 
 GO

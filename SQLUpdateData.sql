@@ -9,27 +9,46 @@ CREATE PROCEDURE UpdateEmployee
 @Email NVARCHAR(100) = NULL,
 @Experience INT = NULL,
 @Position NVARCHAR(50) = NULL,
+@Salary INT = NULL,
 @UserLogin NVARCHAR(50) = NULL,
 @UserPassword NVARCHAR(50) = NULL,
+@ChangePassword BIT = 0,
 @AdminLogin NVARCHAR(50),
 @AdminPassword NVARCHAR(50)
 AS BEGIN
-IF (@Position = 'SYSTEM_ADMIN' AND @ID != ISNULL((SELECT ID FROM Employees WHERE UserLogin = @AdminLogin), -1)
+IF (@Position = 'SYSTEM_ADMIN' AND @ID != ISNULL((SELECT ID FROM Employees WHERE UserLogin = @AdminLogin), -1))
    THROW 50000, 'INVALID_POSITION_ERROR', 255;
 IF (NOT EXISTS(SELECT ID FROM Employees WHERE ID = @ID))
    THROW 50000, 'INVALID_ID_ERROR', 255;
 IF (Dbo.SignIn(@AdminLogin, @AdminPassword) = 'SYSTEM_ADMIN')
-   UPDATE Employees
-   SET Name = @Name,
-   Age = @Age,
-   Gender = @Gender,
-   PhoneNumber = @PhoneNumber,
-   Email = @Email,
-   Experience = @Experience,
-   Position = @Position,
-   UserLogin = @UserLogin,
-   UserPassword = HASHBYTES('SHA2_512', @UserPassword)
-   WHERE ID = @ID;
+   BEGIN
+   IF (@ChangePassword = 0 OR @ChangePassword IS NULL)
+      UPDATE Employees
+      SET Name = @Name,
+      Age = @Age,
+      Gender = @Gender,
+      PhoneNumber = @PhoneNumber,
+      Email = @Email,
+      Experience = @Experience,
+      Position = @Position,
+      Salary = @Salary,
+      UserLogin = @UserLogin
+      WHERE ID = @ID;
+   
+   ELSE
+      UPDATE Employees
+      SET Name = @Name,
+      Age = @Age,
+      Gender = @Gender,
+      PhoneNumber = @PhoneNumber,
+      Email = @Email,
+      Experience = @Experience,
+      Position = @Position,
+      Salary = @Salary,
+      UserLogin = @UserLogin,
+      UserPassword = HASHBYTES('SHA2_512', @UserPassword)
+      WHERE ID = @ID;
+   END;
 ELSE
    THROW 50000, 'AUTHORIZATION_ERROR', 255;
 END

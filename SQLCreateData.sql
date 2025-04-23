@@ -16,6 +16,7 @@ CREATE PROCEDURE CreateEmployee
 @Email NVARCHAR(100) = NULL,
 @Experience INT = NULL,
 @Position NVARCHAR(50) = NULL,
+@Salary INT = NULL,
 @UserLogin NVARCHAR(50) = NULL,
 @UserPassword NVARCHAR(50) = NULL,
 @AdminLogin NVARCHAR(50),
@@ -24,7 +25,7 @@ AS BEGIN
 IF @Position = 'SYSTEM_ADMIN'
    THROW 50000, 'INVALID_POSITION_ERROR', 255;
 IF (Dbo.SignIn(@AdminLogin, @AdminPassword) = 'SYSTEM_ADMIN')
-   INSERT INTO Employees (Name, Age, Gender, PhoneNumber, Email, Experience, Position, UserLogin, UserPassword) VALUES (@Name, @Age, @Gender, @PhoneNumber, @Email, @Experience, @Position, @UserLogin, HASHBYTES('SHA2_512', @UserPassword));
+   INSERT INTO Employees (Name, Age, Gender, PhoneNumber, Email, Experience, Position, Salary, UserLogin, UserPassword) VALUES (@Name, @Age, @Gender, @PhoneNumber, @Email, @Experience, @Position, @Salary, @UserLogin, HASHBYTES('SHA2_512', @UserPassword));
 ELSE
    THROW 50000, 'AUTHORIZATION_ERROR', 255;
 END
@@ -84,7 +85,7 @@ CREATE PROCEDURE CreateCustomerOrder
 @AdminPassword NVARCHAR(50)
 AS BEGIN
 IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('SYSTEM_ADMIN', 'SHOP_ADMIN', 'SHOP_MANAGER', 'SHOP_CASHIER'))
-   INSERT INTO CustomerOrders (CustomerID, EmployeeID, Date) VALUES (@CustomerID, (SELECT ID FROM Employees WHERE UserLogin = @AdminLogin), GETDATE());
+   INSERT INTO CustomerOrders (CustomerID, EmployeeID, Date) VALUES (@CustomerID, (SELECT ID FROM Employees WHERE UserLogin = @AdminLogin), SYSDATETIMEOFFSET());
 ELSE
    THROW 50000, 'AUTHORIZATION_ERROR', 255;
 END
@@ -122,7 +123,7 @@ IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('SYSTEM_ADMIN', 'SHOP_ADMIN', 'S
    BEGIN
    SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
    BEGIN TRANSACTION;
-   INSERT INTO CustomerReturnItems (OrderItemID, Amount, EmployeeID, Reason, Date) VALUES (@OrderItemID, @Amount, (SELECT ID FROM Employees WHERE UserLogin = @AdminLogin), @Reason, GETDATE());
+   INSERT INTO CustomerReturnItems (OrderItemID, Amount, EmployeeID, Reason, Date) VALUES (@OrderItemID, @Amount, (SELECT ID FROM Employees WHERE UserLogin = @AdminLogin), @Reason, SYSDATETIMEOFFSET());
    COMMIT;
    END;
 ELSE
@@ -137,7 +138,7 @@ CREATE PROCEDURE CreateSupplierOrder
 @AdminPassword NVARCHAR(50)
 AS BEGIN
 IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('SYSTEM_ADMIN', 'SHOP_ADMIN'))
-   INSERT INTO SupplierOrders (SupplierID, EmployeeID, Date) VALUES (@SupplierID, (SELECT ID FROM Employees WHERE UserLogin = @AdminLogin), GETDATE());
+   INSERT INTO SupplierOrders (SupplierID, EmployeeID, Date) VALUES (@SupplierID, (SELECT ID FROM Employees WHERE UserLogin = @AdminLogin), SYSDATETIMEOFFSET());
 ELSE
    THROW 50000, 'AUTHORIZATION_ERROR', 255;
 END;
@@ -176,7 +177,7 @@ IF (Dbo.SignIn(@AdminLogin, @AdminPassword) IN ('SYSTEM_ADMIN', 'SHOP_ADMIN'))
    BEGIN
    SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
    BEGIN TRANSACTION;
-   INSERT INTO SupplierReturnItems(OrderItemID, Amount, EmployeeID, Reason, Date) VALUES (@OrderItemID, @Amount, (SELECT ID FROM Employees WHERE UserLogin = @AdminLogin), @Reason, GETDATE());
+   INSERT INTO SupplierReturnItems(OrderItemID, Amount, EmployeeID, Reason, Date) VALUES (@OrderItemID, @Amount, (SELECT ID FROM Employees WHERE UserLogin = @AdminLogin), @Reason, SYSDATETIMEOFFSET());
    COMMIT;
    END;
 ELSE
