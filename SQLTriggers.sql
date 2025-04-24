@@ -78,7 +78,7 @@ END
 GO
 
 CREATE TRIGGER TriggerOnDeleteCustomerOrderItem ON CustomerOrderItems
-AFTER DELETE
+INSTEAD OF DELETE
 AS BEGIN
 UPDATE Products
 SET Amount = Products.Amount + OrderProducts.AmountSum - ISNULL(OrderProducts.AmountReturnedSum, 0)
@@ -87,12 +87,22 @@ JOIN (SELECT ProductID, SUM(Amount) AS AmountSum, SUM(AmountReturned) AS AmountR
    LEFT JOIN (SELECT OrderItemID, SUM(Amount) AS AmountReturned FROM CustomerReturnItems GROUP BY OrderItemID) AS ReturnedGroupBy
    ON ReturnedGroupBy.OrderItemID = Deleted.ID GROUP BY ProductID) AS OrderProducts
    ON OrderProducts.ProductID = Products.ID;
+
+UPDATE CustomerReturnItems
+SET Amount = 0
+WHERE OrderItemID IN (SELECT ID FROM Deleted);
+
+DELETE FROM CustomerReturnItems
+WHERE OrderItemID IN (SELECT ID FROM Deleted);
+
+DELETE FROM CustomerOrderItems
+WHERE ID IN (SELECT ID FROM Deleted);
 END
 
 GO
 
 CREATE TRIGGER TriggerOnDeleteCustomerReturnItem ON CustomerReturnItems
-AFTER DELETE
+INSTEAD OF DELETE
 AS BEGIN
 IF EXISTS(SELECT 1 FROM Deleted
    JOIN Products ON Products.ID = (SELECT ProductID FROM CustomerOrderItems WHERE ID = Deleted.OrderItemID)
@@ -106,12 +116,15 @@ JOIN (SELECT CustomerOrderItems.ProductID, SUM(Deleted.Amount) AS AmountSum FROM
    JOIN CustomerOrderItems ON CustomerOrderItems.ID = Deleted.OrderItemID
    GROUP BY CustomerOrderItems.ProductID) AS DeletedGroupBy
    ON DeletedGroupBy.ProductID = Products.ID;
+
+DELETE FROM CustomerReturnItems
+WHERE ID IN (SELECT ID FROM Deleted);
 END
 
 GO
 
 CREATE TRIGGER TriggerOnDeleteSupplierOrderItem ON SupplierOrderItems
-AFTER DELETE
+INSTEAD OF DELETE
 AS BEGIN
 IF EXISTS(SELECT 1 FROM Deleted
    JOIN Products ON Products.ID = Deleted.ProductID
@@ -127,12 +140,22 @@ JOIN (SELECT ProductID, SUM(Amount) AS AmountSum, SUM(AmountReturned) AS AmountR
    LEFT JOIN (SELECT OrderItemID, SUM(Amount) AS AmountReturned FROM SupplierReturnItems GROUP BY OrderItemID) AS ReturnedGroupBy
    ON ReturnedGroupBy.OrderItemID = Deleted.ID GROUP BY ProductID) AS OrderProducts
    ON OrderProducts.ProductID = Products.ID;
+
+UPDATE SupplierReturnItems
+SET Amount = 0
+WHERE OrderItemID IN (SELECT ID FROM Deleted);
+
+DELETE FROM SupplierReturnItems
+WHERE OrderItemID IN (SELECT ID FROM Deleted);
+
+DELETE FROM SupplierOrderItems
+WHERE ID IN (SELECT ID FROM Deleted);
 END
 
 GO
 
 CREATE TRIGGER TriggerOnDeleteSupplierReturnItem ON SupplierReturnItems
-AFTER DELETE
+INSTEAD OF DELETE
 AS BEGIN
 UPDATE Products
 SET Amount = Products.Amount + DeletedGroupBy.AmountSum
@@ -141,4 +164,29 @@ JOIN (SELECT SupplierOrderItems.ProductID, SUM(Deleted.Amount) AS AmountSum FROM
    JOIN SupplierOrderItems ON SupplierOrderItems.ID = Deleted.OrderItemID
    GROUP BY SupplierOrderItems.ProductID) AS DeletedGroupBy
    ON DeletedGroupBy.ProductID = Products.ID;
+
+DELETE FROM SupplierReturnItems
+WHERE ID IN (SELECT ID FROM Deleted);
+END
+
+GO
+
+CREATE TRIGGER TriggerOnDeleteCustomerOrder ON CustomerOrders
+INSTEAD OF DELETE
+AS BEGIN
+DELETE FROM CustomerOrderItems
+WHERE OrderID IN (SELECT ID FROM Deleted);
+DELETE FROM CustomerOrders
+WHERE ID IN (SELECT ID FROM Deleted);
+END
+
+GO
+
+CREATE TRIGGER TriggerOnDeleteSupplierOrder ON SupplierOrders
+INSTEAD OF DELETE
+AS BEGIN
+DELETE FROM SupplierOrderItems
+WHERE OrderID IN (SELECT ID FROM Deleted);
+DELETE FROM SupplierOrders
+WHERE ID IN (SELECT ID FROM Deleted);
 END
