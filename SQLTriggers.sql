@@ -22,10 +22,10 @@ CREATE TRIGGER TriggerOnInsertCustomerReturnItem ON CustomerReturnItems
 INSTEAD OF INSERT
 AS BEGIN
 IF EXISTS(SELECT 1 FROM Inserted
-   JOIN (SELECT OrderItemID, SUM(Amount) AS AlreadyReturned FROM CustomerReturnItems GROUP BY OrderItemID) AS ReturnItems 
+   LEFT JOIN (SELECT OrderItemID, SUM(Amount) AS AlreadyReturned FROM CustomerReturnItems GROUP BY OrderItemID) AS ReturnItems 
    ON ReturnItems.OrderItemID = Inserted.OrderItemID
    GROUP BY Inserted.OrderItemID
-   HAVING ((SUM(Inserted.Amount) + MAX(AlreadyReturned)) > (SELECT Amount FROM CustomerOrderItems WHERE ID = Inserted.OrderItemID)))
+   HAVING ((SUM(Inserted.Amount) + ISNULL(MAX(AlreadyReturned), 0)) > (SELECT Amount FROM CustomerOrderItems WHERE ID = Inserted.OrderItemID)))
    THROW 50000, 'AMOUNT_TOO_BIG', 255;
 UPDATE Products
 SET Amount = Products.Amount + ProductSum.AmountSum
@@ -60,10 +60,10 @@ IF EXISTS(SELECT 1 FROM Inserted
    HAVING SUM(Inserted.Amount) > MIN(Products.Amount))
    THROW 50000, 'NOT_ENOUGH_PRODUCT', 255;
 IF EXISTS(SELECT 1 FROM Inserted
-   JOIN (SELECT OrderItemID, SUM(Amount) AS AlreadyReturned FROM SupplierReturnItems GROUP BY OrderItemID) AS ReturnItems 
+   LEFT JOIN (SELECT OrderItemID, SUM(Amount) AS AlreadyReturned FROM SupplierReturnItems GROUP BY OrderItemID) AS ReturnItems 
    ON ReturnItems.OrderItemID = Inserted.OrderItemID
    GROUP BY Inserted.OrderItemID
-   HAVING ((SUM(Inserted.Amount) + MAX(AlreadyReturned)) > (SELECT Amount FROM SupplierOrderItems WHERE ID = Inserted.OrderItemID)))
+   HAVING ((SUM(Inserted.Amount) + ISNULL(MAX(AlreadyReturned), 0)) > (SELECT Amount FROM SupplierOrderItems WHERE ID = Inserted.OrderItemID)))
    THROW 50000, 'AMOUNT_TOO_BIG', 255;
 UPDATE Products
 SET Amount = Products.Amount - InsertedGroupBy.AmountSum
@@ -81,10 +81,10 @@ CREATE TRIGGER TriggerOnDeleteCustomerOrderItem ON CustomerOrderItems
 AFTER DELETE
 AS BEGIN
 UPDATE Products
-SET Amount = Products.Amount + OrderProducts.AmountSum - OrderProducts.AmountReturnedSum
+SET Amount = Products.Amount + OrderProducts.AmountSum - ISNULL(OrderProducts.AmountReturnedSum, 0)
 FROM Products
 JOIN (SELECT ProductID, SUM(Amount) AS AmountSum, SUM(AmountReturned) AS AmountReturnedSum FROM Deleted 
-   JOIN (SELECT OrderItemID, SUM(Amount) AS AmountReturned FROM CustomerReturnItems GROUP BY OrderItemID) AS ReturnedGroupBy
+   LEFT JOIN (SELECT OrderItemID, SUM(Amount) AS AmountReturned FROM CustomerReturnItems GROUP BY OrderItemID) AS ReturnedGroupBy
    ON ReturnedGroupBy.OrderItemID = Deleted.ID GROUP BY ProductID) AS OrderProducts
    ON OrderProducts.ProductID = Products.ID;
 END
@@ -115,16 +115,16 @@ AFTER DELETE
 AS BEGIN
 IF EXISTS(SELECT 1 FROM Deleted
    JOIN Products ON Products.ID = Deleted.ProductID
-   JOIN (SELECT OrderItemID, SUM(Amount) AS AmountReturned FROM SupplierReturnItems GROUP BY OrderItemID) AS ReturnedGroupBy ON ReturnedGroupBy.OrderItemID = Deleted.ID
+   LEFT JOIN (SELECT OrderItemID, SUM(Amount) AS AmountReturned FROM SupplierReturnItems GROUP BY OrderItemID) AS ReturnedGroupBy ON ReturnedGroupBy.OrderItemID = Deleted.ID
    GROUP BY Products.ID
-   HAVING (SUM(Deleted.Amount) - SUM(AmountReturned)) > MIN(Products.Amount))
+   HAVING (SUM(Deleted.Amount) - ISNULL(SUM(AmountReturned), 0)) > MIN(Products.Amount))
    THROW 50000, 'NOT_ENOUGH_PRODUCT', 255;
 
 UPDATE Products
-SET Amount = Products.Amount - OrderProducts.AmountSum + OrderProducts.AmountReturnedSum
+SET Amount = Products.Amount - OrderProducts.AmountSum + ISNULL(OrderProducts.AmountReturnedSum, 0)
 FROM Products
 JOIN (SELECT ProductID, SUM(Amount) AS AmountSum, SUM(AmountReturned) AS AmountReturnedSum FROM Deleted
-   JOIN (SELECT OrderItemID, SUM(Amount) AS AmountReturned FROM SupplierReturnItems GROUP BY OrderItemID) AS ReturnedGroupBy
+   LEFT JOIN (SELECT OrderItemID, SUM(Amount) AS AmountReturned FROM SupplierReturnItems GROUP BY OrderItemID) AS ReturnedGroupBy
    ON ReturnedGroupBy.OrderItemID = Deleted.ID GROUP BY ProductID) AS OrderProducts
    ON OrderProducts.ProductID = Products.ID;
 END
