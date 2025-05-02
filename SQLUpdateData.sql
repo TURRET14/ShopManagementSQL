@@ -10,8 +10,8 @@ CREATE PROCEDURE UpdateEmployee
 @Experience INT = NULL,
 @Position NVARCHAR(50) = NULL,
 @Salary INT = NULL,
-@UserLogin NVARCHAR(50) = NULL,
-@UserPassword NVARCHAR(50) = NULL,
+@UserLogin NVARCHAR(50),
+@UserPassword NVARCHAR(50),
 @ChangePassword BIT = 0,
 @AdminLogin NVARCHAR(50),
 @AdminPassword NVARCHAR(50)
@@ -20,6 +20,8 @@ IF (@Position = 'SYSTEM_ADMIN' AND @ID != ISNULL((SELECT ID FROM Employees WHERE
    THROW 50000, 'INVALID_POSITION_ERROR', 255;
 IF (NOT EXISTS(SELECT ID FROM Employees WHERE ID = @ID))
    THROW 50000, 'INVALID_ID_ERROR', 255;
+IF (EXISTS(SELECT TOP 1 ID FROM Employees WHERE UserLogin = @UserLogin AND ID != @ID))
+   THROW 50000, 'ALREADY_TAKEN_LOGIN_ERROR', 255;
 IF (Dbo.SignIn(@AdminLogin, @AdminPassword) = 'SYSTEM_ADMIN')
    BEGIN
    IF (@ChangePassword = 0 OR @ChangePassword IS NULL)
