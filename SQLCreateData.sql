@@ -17,13 +17,15 @@ CREATE PROCEDURE CreateEmployee
 @Experience INT = NULL,
 @Position NVARCHAR(50) = NULL,
 @Salary INT = NULL,
-@UserLogin NVARCHAR(50) = NULL,
-@UserPassword NVARCHAR(50) = NULL,
+@UserLogin NVARCHAR(50),
+@UserPassword NVARCHAR(50),
 @AdminLogin NVARCHAR(50),
 @AdminPassword NVARCHAR(50)
 AS BEGIN
 IF @Position = 'SYSTEM_ADMIN'
    THROW 50000, 'INVALID_POSITION_ERROR', 255;
+IF (EXISTS(SELECT TOP 1 ID FROM Employees WHERE UserLogin = @UserLogin))
+   THROW 50000, 'ALREADY_TAKEN_LOGIN_ERROR', 255;
 IF (Dbo.SignIn(@AdminLogin, @AdminPassword) = 'SYSTEM_ADMIN')
    INSERT INTO Employees (Name, Age, Gender, PhoneNumber, Email, Experience, Position, Salary, UserLogin, UserPassword) VALUES (@Name, @Age, @Gender, @PhoneNumber, @Email, @Experience, @Position, @Salary, @UserLogin, HASHBYTES('SHA2_512', @UserPassword));
 ELSE

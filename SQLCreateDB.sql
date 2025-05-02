@@ -11,8 +11,8 @@ Email NVARCHAR(100),
 Experience INT CHECK (Experience >= 0),
 Position NVARCHAR(50) CHECK (Position IN ('SYSTEM_ADMIN', 'SHOP_ADMIN', 'SHOP_MANAGER', 'SHOP_CASHIER')),
 Salary INT CHECK (Salary >= 0),
-UserLogin NVARCHAR(50) UNIQUE,
-UserPassword VARBINARY(64));
+UserLogin NVARCHAR(50) UNIQUE NOT NULL,
+UserPassword VARBINARY(64) NOT NULL);
 
 CREATE TABLE Products
 (ID INT PRIMARY KEY IDENTITY(0, 1),
@@ -75,3 +75,5 @@ Amount INT NOT NULL CHECK (Amount >= 0) DEFAULT 0,
 EmployeeID INT REFERENCES Employees ON DELETE SET NULL,
 Reason VARCHAR(150),
 Date DATETIMEOFFSET NOT NULL);
+
+INSERT INTO Employees (ID, Name, Position, UserLogin, UserPassword) VALUES (0, 'Системный Администратор', 'SYSTEM_ADMIN', 'Admin', HASHBYTES('SHA2_512', N'SYSTEM_ADMIN_PASSWORD'));
