@@ -5,7 +5,7 @@ CREATE PROCEDURE UpdateEmployee
 @Name NVARCHAR(100),
 @Age INT = NULL,
 @Gender NCHAR = NULL,
-@PhoneNumber NVARCHAR(15) = NULL,
+@PhoneNumber NVARCHAR(20) = NULL,
 @Email NVARCHAR(100) = NULL,
 @Experience INT = NULL,
 @Position NVARCHAR(50) = NULL,
@@ -60,7 +60,7 @@ GO
 CREATE PROCEDURE UpdateCustomer
 @ID INT,
 @Name NVARCHAR(100),
-@PhoneNumber NVARCHAR(15) = NULL,
+@PhoneNumber NVARCHAR(20) = NULL,
 @Email NVARCHAR(100) = NULL,
 @AdminLogin NVARCHAR(50),
 @AdminPassword NVARCHAR(50)
@@ -106,7 +106,7 @@ GO
 CREATE PROCEDURE UpdateSupplier
 @ID INT,
 @Name NVARCHAR(100),
-@PhoneNumber NVARCHAR(15) = NULL,
+@PhoneNumber NVARCHAR(20) = NULL,
 @Email NVARCHAR(100) = NULL,
 @AccountNumber NVARCHAR(20) = NULL,
 @AdminLogin NVARCHAR(50),

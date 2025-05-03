@@ -24,7 +24,7 @@ Description NVARCHAR(100));
 CREATE TABLE Suppliers
 (ID INT PRIMARY KEY IDENTITY(0, 1),
 Name NVARCHAR(100) NOT NULL,
-PhoneNumber NVARCHAR(15),
+PhoneNumber NVARCHAR(20),
 Email NVARCHAR(100),
 AccountNumber NVARCHAR(20));
 
