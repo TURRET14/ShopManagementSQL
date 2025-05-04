@@ -12,7 +12,6 @@ CREATE PROCEDURE UpdateEmployee
 @Salary INT = NULL,
 @UserLogin NVARCHAR(50),
 @UserPassword NVARCHAR(50),
-@ChangePassword BIT = 0,
 @AdminLogin NVARCHAR(50),
 @AdminPassword NVARCHAR(50)
 AS BEGIN
@@ -24,7 +23,7 @@ IF (EXISTS(SELECT TOP 1 ID FROM Employees WHERE UserLogin = @UserLogin AND ID !=
    THROW 50000, 'ALREADY_TAKEN_LOGIN_ERROR', 255;
 IF (Dbo.SignIn(@AdminLogin, @AdminPassword) = 'SYSTEM_ADMIN')
    BEGIN
-   IF (@ChangePassword = 0 OR @ChangePassword IS NULL)
+   IF (@UserPassword IS NULL)
       UPDATE Employees
       SET Name = @Name,
       Age = @Age,
@@ -36,7 +35,6 @@ IF (Dbo.SignIn(@AdminLogin, @AdminPassword) = 'SYSTEM_ADMIN')
       Salary = @Salary,
       UserLogin = @UserLogin
       WHERE ID = @ID;
-   
    ELSE
       UPDATE Employees
       SET Name = @Name,
