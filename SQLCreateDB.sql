@@ -76,4 +76,12 @@ EmployeeID INT REFERENCES Employees ON DELETE SET NULL,
 Reason VARCHAR(150),
 Date DATETIMEOFFSET NOT NULL);
 
-INSERT INTO Employees (ID, Name, Position, UserLogin, UserPassword) VALUES (0, 'Системный Администратор', 'SYSTEM_ADMIN', 'Admin', HASHBYTES('SHA2_512', N'SYSTEM_ADMIN_PASSWORD'));
+INSERT INTO Employees (Name, Position, UserLogin, UserPassword) VALUES ('Системный Администратор', 'SYSTEM_ADMIN', 'Admin', HASHBYTES('SHA2_512', N'SYSTEM_ADMIN_PASSWORD'));
+
+CREATE LOGIN ShopManagementAdmin WITH PASSWORD = 'RTF365JHN15!';
+CREATE USER ShopManagementAdminDBUser FOR LOGIN ShopManagementAdmin;
+GRANT CONTROL ON DATABASE::ShopManagement TO ShopManagementAdminDBUser;
+
+CREATE LOGIN ShopManagementGuest WITH PASSWORD = 'JFHLKT51065!';
+CREATE USER ShopManagementGuestDBUser FOR LOGIN ShopManagementGuest;
+GRANT EXECUTE ON SCHEMA::Dbo TO ShopManagementGuestDBUser;
